@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/fetcher', {
   useMongoClient: true
 });
-
+var db = mongoose.connection;
 let repoSchema = mongoose.Schema({
   "id": Number,
   "name": String,
@@ -77,25 +77,25 @@ let repoSchema = mongoose.Schema({
 let Repo = mongoose.model('Repo', repoSchema);
 
 let save = (newRepo) => {
-  db = mongoose.connection;
-  db.once('open', () => {
+  // db.once('open', () => {
     var repo = new Repo(newRepo);
     repo.save((err, repo) => {
       if(err) throw err;
       db.close();
       console.log('Saved')
     });
-  });
+  // });
 }
 
 let get = (callback) => {
-  db = mongoose.connection;
-  db.once('open', () => {
+  // var db = mongoose.connection;
+  // db.once('open', () => {
+    console.log('Getting repos...');
     Repo.find((err, repo) => {
       callback(err, repo);
       db.close();
     });
-  });
+  // });
 }
 
 var exampleObj = {
@@ -191,3 +191,4 @@ var exampleObj = {
 // get();
 
 module.exports.save = save;
+module.exports.get = get;
