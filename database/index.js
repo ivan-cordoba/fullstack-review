@@ -76,14 +76,13 @@ let repoSchema = mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (newRepo) => {
+let save = (newRepos, callback) => {
   // db.once('open', () => {
-    var repo = new Repo(newRepo);
-    repo.save((err, repo) => {
+    Repo.collection.insert(newRepos, (err, docs) => {
       if(err) throw err;
-      db.close();
-      console.log('Saved')
-    });
+      callback();
+      console.log('Inserted');
+    })
   // });
 }
 
@@ -93,7 +92,6 @@ let get = (callback) => {
     console.log('Getting repos...');
     Repo.find((err, repo) => {
       callback(err, repo);
-      db.close();
     });
   // });
 }
