@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/fetcher', {
   useMongoClient: true
 });
+mongoose.Promise = require('bluebird');
 var db = mongoose.connection;
 let repoSchema = mongoose.Schema({
-  "id": Number,
+  "id": {type: Number, unique: true},
   "name": String,
   "full_name": String,
   "owner": Object,
@@ -79,9 +80,12 @@ let Repo = mongoose.model('Repo', repoSchema);
 let save = (newRepos, callback) => {
   // db.once('open', () => {
     Repo.collection.insert(newRepos, (err, docs) => {
-      if(err) throw err;
+      if(err && err.message.includes('E11000')) {
+        console.log(err);
+      } else {
+        console.log('Inserted');
+      }
       callback();
-      console.log('Inserted');
     })
   // });
 }
@@ -90,7 +94,10 @@ let get = (callback) => {
   // var db = mongoose.connection;
   // db.once('open', () => {
     console.log('Getting repos...');
-    Repo.find((err, repo) => {
+    Repo.find()
+    .limit(25)
+    .sort('-stargazers_count')
+    .exec((err, repo) => {
       callback(err, repo);
     });
   // });

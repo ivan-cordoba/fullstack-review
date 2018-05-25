@@ -20,10 +20,11 @@ class App extends React.Component {
       type: 'POST',
       contentType: 'application/json',
       data: JSON.stringify({username: term}),
-      success: function(message) {
-        console.log(JSON.parse(message));
+      success: (message) => {
+        console.log(message);
+        this.getRepos();
       },
-      error: function(err) {
+      error: (err) => {
         console.error(err);
       }
     });
@@ -38,7 +39,7 @@ class App extends React.Component {
       success: (message) => {
         var repos = JSON.parse(message).data;
         this.setState({
-          repos: this.state.repos.concat(repos)
+          repos: repos
         });
       },
       error: function(err) {
