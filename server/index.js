@@ -1,5 +1,6 @@
 const express = require('express');
 var bodyParser = require('body-parser');
+var Promise = require('bluebird');
 var db = require('../database/index.js');
 var gh = require('../helpers/github.js');
 
@@ -11,11 +12,16 @@ app.use(bodyParser.json());
 
 app.post('/repos', function (req, res) {
   var username = req.body.username;
-  gh.getReposByUsername(username, (error, response, body) => {
-    var repos = JSON.parse(body);
-    db.save(repos, () => {
-      res.end('Repos stores in DB');
-    });
+  gh.getReposByUsername(username)
+  .then((data) => {
+    var repos = JSON.parse(data);
+    return db.save(repos);
+  })
+  .then((message) => {
+    res.end(message);
+  })
+  .catch((error) => {
+    console.error(error);
   });
   
 });
