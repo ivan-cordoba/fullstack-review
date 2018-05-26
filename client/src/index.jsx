@@ -7,6 +7,8 @@ import RepoList from './components/RepoList.jsx';
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.new = 0;
+    this.updated = 0;
     this.getRepos();
     this.state = { 
       repos: []
@@ -21,7 +23,9 @@ class App extends React.Component {
       contentType: 'application/json',
       data: JSON.stringify({username: term}),
       success: (message) => {
-        console.log(message);
+        var data = JSON.parse(message);
+        this.new = data.new;
+        this.updated = data.updated;
         this.getRepos();
       },
       error: (err) => {
@@ -52,7 +56,7 @@ class App extends React.Component {
     return (<div>
       <h1>Github Fetcher</h1>      
       <Search onSearch={this.search.bind(this)}/>
-      <RepoList repos={this.state.repos}/>
+      <RepoList repos={this.state.repos} new={this.new} updated={this.updated}/>
     </div>)
   }
 }

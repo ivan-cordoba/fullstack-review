@@ -3,7 +3,7 @@ import React from 'react';
 const RepoList = (props) => (
   <div>
     <h4> Repo List Component </h4>
-    There are {props.repos.length} repos.
+    There are {props.repos.length} repos. New Repos: {props.new}, Updated Repos: {props.updated}
     <table>
       <thead>
         <tr><td>GitHub User</td><td>Repo Name</td><td>Number Of Forks</td><td>Number of Watchers</td></tr>

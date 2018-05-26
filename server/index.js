@@ -12,16 +12,31 @@ app.use(bodyParser.json());
 
 app.post('/repos', function (req, res) {
   var username = req.body.username;
-  gh.getReposByUsername(username)
+  var countBeforeInsert = 0;
+  var countAfterInsert = 0;
+  var reposData = [];
+  db.count()
+  .then((count) => {
+    countBeforeInsert = count;
+    return gh.getReposByUsername(username);
+  })
   .then((data) => {
-    var repos = JSON.parse(data);
-    return db.save(repos);
+    reposData = JSON.parse(data);
+    return db.save(reposData);
   })
   .then((message) => {
-    res.end(message);
+    if(message) console.log('DUPLICATES NOT INSERTED');
+    return db.count();
   })
-  .catch((error) => {
-    console.error(error);
+  .then((count) => {
+    countAfterInsert = count;
+    var newCount = countAfterInsert - countBeforeInsert;
+    var updatedCount = reposData.length - newCount;
+    var responseObj = {new: newCount, updated: updatedCount};
+    res.end(JSON.stringify(responseObj));
+  })
+  .catch((err) => {
+    console.error(err);
   });
 });
 
@@ -43,4 +58,3 @@ let port = process.env.PORT || 1128;
 app.listen(port, function() {
   console.log(`listening on port ${port}`);
 });
-
