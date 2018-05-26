@@ -78,29 +78,24 @@ let repoSchema = mongoose.Schema({
 let Repo = mongoose.model('Repo', repoSchema);
 
 let save = (newRepos, callback) => {
-  // db.once('open', () => {
-    Repo.collection.insert(newRepos, (err, docs) => {
-      if(err && err.message.includes('E11000')) {
-        console.log(err);
-      } else {
-        console.log('Inserted');
-      }
-      callback();
-    })
-  // });
+  Repo.collection.insert(newRepos, (err, docs) => {
+    if(err && err.message.includes('E11000')) {
+      console.log(err);
+    } else {
+      console.log('Inserted');
+    }
+    callback();
+  })
 }
 
 let get = (callback) => {
-  // var db = mongoose.connection;
-  // db.once('open', () => {
-    console.log('Getting repos...');
-    Repo.find()
-    .limit(25)
-    .sort('-stargazers_count')
-    .exec((err, repo) => {
-      callback(err, repo);
-    });
-  // });
+  console.log('Getting repos...');
+  Repo.find()
+  .limit(25)
+  .sort('-stargazers_count')
+  .exec((err, repo) => {
+    callback(err, repo);
+  });
 }
 
 var exampleObj = {
@@ -191,9 +186,6 @@ var exampleObj = {
   "watchers": 7,
   "default_branch": "master"
 }
-
-// save(exampleObj);
-// get();
 
 module.exports.save = save;
 module.exports.get = get;
