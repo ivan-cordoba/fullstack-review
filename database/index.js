@@ -92,12 +92,17 @@ let save = (newRepos) => {
 }
 
 let get = (callback) => {
-  console.log('Getting repos...');
-  Repo.find()
-  .limit(25)
-  .sort('-stargazers_count')
-  .exec((err, repo) => {
-    callback(err, repo);
+  return new Promise((resolve, reject) => {
+    Repo.find()
+    .limit(25)
+    .sort('-stargazers_count')
+    .exec((err, repo) => {
+      if(err) {
+        reject(err);
+      } else {
+        resolve(repo);
+      }
+    });
   });
 }
 

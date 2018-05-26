@@ -23,16 +23,18 @@ app.post('/repos', function (req, res) {
   .catch((error) => {
     console.error(error);
   });
-  
 });
 
 app.get('/repos', function (req, res) {
   console.log(req.method);
-  db.get((err, data) => {
-    if(err) throw err;
+  db.get()
+  .then((data) => {
     res.statusCode = 200;
     res.type('text');
     res.end(JSON.stringify({data: data}));
+  })
+  .catch((err) => {
+    console.error(err);
   });
 });
 
