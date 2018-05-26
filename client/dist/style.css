@@ -9,3 +9,18 @@ td{
 table {
   margin: auto;
 }
+
+#repo-list {
+  width: 70%;
+  float: left;
+}
+
+#user-list {
+  float: left;
+  width: 20%;
+}
+
+#content-container {
+  width: 75%;
+  margin: auto;
+}

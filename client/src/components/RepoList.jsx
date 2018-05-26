@@ -1,7 +1,7 @@
 import React from 'react';
 
 const RepoList = (props) => (
-  <div>
+  <div id="repo-list">
     <h4> Repo List Component </h4>
     There are {props.repos.length} repos. New Repos: {props.new}, Updated Repos: {props.updated}
     <table>

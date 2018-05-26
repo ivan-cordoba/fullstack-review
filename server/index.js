@@ -46,7 +46,7 @@ app.get('/repos', function (req, res) {
   .then((data) => {
     res.statusCode = 200;
     res.type('text');
-    res.end(JSON.stringify({data: data}));
+    res.end(JSON.stringify({repos: data.repos, users: data.users}));
   })
   .catch((err) => {
     console.error(err);

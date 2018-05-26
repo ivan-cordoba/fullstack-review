@@ -4,6 +4,7 @@ mongoose.connect('mongodb://localhost/fetcher', {
 });
 mongoose.Promise = require('bluebird');
 var db = mongoose.connection;
+
 let repoSchema = mongoose.Schema({
   "id": {type: Number, unique: true},
   "name": String,
@@ -75,10 +76,32 @@ let repoSchema = mongoose.Schema({
   "default_branch": String
 });
 
+let userSchema = mongoose.Schema({
+  "login": String,
+  "id": {type: Number, unique: true},
+  "avatar_url": String,
+  "gravatar_id": String,
+  "url": String,
+  "html_url": String,
+  "followers_url": String,
+  "following_url": String,
+  "gists_url": String,
+  "starred_url": String,
+  "subscriptions_url": String,
+  "organizations_url": String,
+  "repos_url": String,
+  "events_url": String,
+  "received_events_url": String,
+  "type": String,
+  "site_admin": Boolean
+});
+
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (newRepos) => {
+let User = mongoose.model('User', userSchema);
 
+let save = (newRepos) => {
+  
   return new Promise((resolve, reject) => {
     Repo.collection.insert(newRepos, (err, docs) => {
       if(err && err.message.includes('E11000')) {
@@ -89,11 +112,26 @@ let save = (newRepos) => {
         resolve();
       }
     })
+  })
+  .then(() => {
+    return new Promise((resolve, reject) => {
+      var user = newRepos[0].owner;
+      User.collection.insert(user, (err, docs) => {
+        if(err && err.message.includes('E11000')) {
+          resolve(err.message);
+        } else if(err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      })
+    });
   });
 
 }
 
 let get = () => {
+  var repos;
   return new Promise((resolve, reject) => {
     Repo.find()
     .limit(25)
@@ -102,8 +140,21 @@ let get = () => {
       if(err) {
         reject(err);
       } else {
+        repos = repo;
         resolve(repo);
       }
+    });
+  })
+  .then(() => {
+    return new Promise((resolve, reject) => {
+      User.find()
+      .exec((err, users) => {
+        if(err) {
+          reject(err);
+        } else {
+          resolve({repos: repos, users: users});
+        }
+      });
     });
   });
 }

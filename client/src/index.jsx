@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
+import UserList from './components/UserList.jsx';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.new = 0;
     this.updated = 0;
+    this.users = [];
     this.getRepos();
     this.state = { 
       repos: []
@@ -41,7 +43,11 @@ class App extends React.Component {
       type: 'GET',
       dataType: 'text',
       success: (message) => {
-        var repos = JSON.parse(message).data;
+        var data = JSON.parse(message);
+        var repos = data.repos;
+        var users = data.users;
+        this.users = users;
+        console.log(this.users);
         this.setState({
           repos: repos
         });
@@ -56,7 +62,10 @@ class App extends React.Component {
     return (<div>
       <h1>Github Fetcher</h1>      
       <Search onSearch={this.search.bind(this)}/>
-      <RepoList repos={this.state.repos} new={this.new} updated={this.updated}/>
+      <div id="content-container">
+        <RepoList repos={this.state.repos} new={this.new} updated={this.updated}/>
+        <UserList users={this.users}/>
+      </div>
     </div>)
   }
 }
